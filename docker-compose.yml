@@ -109,22 +109,24 @@ services:
       - KHOJIX_BUSINESS_SERVER_URL=http://kbs:4243
       - KHOJI_BASICAUTHUSERNAME=${KHOJI_BASICAUTHUSERNAME:-khoji@scrumupdate.local}
       - KHOJI_BASICAUTHUSERPASSWORD=${KHOJI_BASICAUTHUSERPASSWORD:-khoji}
-      - LLM_API=claude
-      - CLAUDE_MODEL=claude-haiku-4-5-20251001
+      - LLM_API=${LLM_API:-claude}
+      - CLAUDE_MODEL=${CLAUDE_MODEL:-claude-haiku-4-5-20251001}
       - CLAUDE_API_KEY=${CLAUDE_API_KEY}
       # Enable the /api/llm/invoke capability backing AI-powered analytics
-      # metrics (e.g. KAS sprint_insight). Uses CLAUDE_API_KEY set above.
+      # metrics (e.g. KAS sprint_insight). Provider is LLM_API (claude or openai).
       - KGS-LLM=true
-      - OPENAI_MODEL=meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo
-      - OPENAI_API_URL=https://api.together.xyz/v1
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_MODEL=${OPENAI_MODEL:-meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo}
+      - OPENAI_API_URL=${OPENAI_API_URL:-https://api.together.xyz/v1}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
       - Unleash__HostUrl=${UNLEASH_INTERNAL_URL:-http://unleash:4242}
       - Unleash__ApiKey=${UNLEASH_BACKEND_API_TOKEN:-}
       - TEAMS_APP_ID=${TEAMS_APP_ID:-}
       - Connections__BotServiceConnection__Settings__ClientId=${MS_BOT_CLIENT_ID:-}
       - Connections__BotServiceConnection__Settings__ClientSecret=${MS_BOT_CLIENT_SECRET:-}
       - TokenValidation__Audiences__0=${MS_BOT_CLIENT_ID:-}
-      # - OLLAMA_URL=http://host.docker.internal:11434/v1
+      # Ollama and other OpenAI-compatible endpoints use LLM_API=openai and
+      # OPENAI_* (see docs/OPENAI.md). From this container, a model server on
+      # the host is host.docker.internal, not localhost.
       # - MCP_ATLASSIAN_URL=http://atlassian-mcp:7010/mcp/
       # Uncomment the following to log request files
       # - DEBUGGING=TRUE

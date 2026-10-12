@@ -28,7 +28,7 @@ This project is maintained by a small team with **no dedicated governing body or
 | KSS (Python) | `cd src/kss && pip install -r requirements.txt` | `cd src/kss && pytest` |
 | Analytics (Python) | `cd src/khoji-analytics/backend && pip install -r requirements.txt` | `cd src/khoji-analytics/backend && pytest` |
 
-> Note: Java builds require JDK 21. The KSS and Analytics test suites need PostgreSQL and Redis (see `docker compose up` at the repo root). More detail in `AGENTS.md`.
+> Note: Java builds require JDK 21. The KSS and Analytics test suites need PostgreSQL and Redis (`docker compose up` at the repo root — see [Getting started](docs/GETTINGSTARTED.md)). More detail in `AGENTS.md`.
 
 ## Code Conventions
 

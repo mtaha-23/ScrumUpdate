@@ -151,6 +151,8 @@ when using Claude, __this needs to be set__, set this to claude-haiku-4-5-202510
 ### LLM_API
 if set, it will be used, possible values, claude, gemini or openai, if missing, claude will be used
 
+Local Docker: set this in the repo-root `.env`. See [docs/OPENAI.md](../../../docs/OPENAI.md) for OpenAI-compatible endpoints (Ollama, Together AI, OpenAI).
+
 ### OPENAI_API_KEY
 __this needs to be set__, for Ollama set it to anything its required but not used for Ollama
 
