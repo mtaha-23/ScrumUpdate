@@ -69,3 +69,6 @@ src/khoji-analytics/.vscode/launch.json
 src/Kgs/KhojiGenAIServer/requests
 src/KGS/KhojiGenAIServer/WebChats
 /TestResults
+
+# Locally generated keystores. Never commit key material.
+/secrets/

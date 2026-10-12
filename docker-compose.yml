@@ -183,6 +183,18 @@ services:
       # these are blank — see KhojiUsersConfig).
       KHOJI_BASICAUTHUSERNAME: ${KHOJI_BASICAUTHUSERNAME:-khoji@scrumupdate.local}
       KHOJI_BASICAUTHUSERPASSWORD: ${KHOJI_BASICAUTHUSERPASSWORD:-khoji}
+      # Container path only. The host directory is the bind mount below, not this value.
+      # Mount the directory, not the file: a missing file bind becomes a directory.
+      # Passwords have no secret fallback; KBS fails startup when they are blank.
+      KEY_STORE_PATH: /run/secrets/khoji-keystore.jck
+      KEY_STORE_PASSWORD: ${KEY_STORE_PASSWORD:-}
+      KEY_PASSWORD: ${KEY_PASSWORD:-}
+      KEY_STORE_MIGRATE: ${KEY_STORE_MIGRATE:-}
+      OLD_KEY_STORE_PATH: ${OLD_KEY_STORE_PATH:-}
+      OLD_KEY_STORE_PASSWORD: ${OLD_KEY_STORE_PASSWORD:-}
+      OLD_KEY_PASSWORD: ${OLD_KEY_PASSWORD:-}
+    volumes:
+      - ./secrets:/run/secrets:ro
     depends_on:
       postgres:
         condition: service_healthy

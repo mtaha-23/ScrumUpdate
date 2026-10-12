@@ -151,6 +151,74 @@ KBS logs `email sent successfully`. Inspect the message at
 **Negative path:** blank `EMAIL_USERNAME` in `.env`, restart KBS → the app logs
 the "Email not configured" warning and no email is sent (Mailpit stays empty).
 
+## Tenant token keystore
+
+KBS encrypts `jwt_source_token` and `jwt_source_refresh_token` with an external
+JCEKS file. The keystore is not in the repository. Any keystore or password
+that was previously committed must be treated as compromised. Deployments must
+generate new key material and new passwords. Do not reuse the old file.
+
+Existing ciphertext in `jwt_source_token` and `jwt_source_refresh_token` cannot
+be decrypted with the new key. Re-encrypt those stored values before discarding
+the old key file. The old passwords and the old file stay out of git. Supply
+them only for the migration run.
+
+Set these in `.env`. Leave the passwords blank in git and supply them only
+in the environment that starts KBS:
+
+```env
+KEY_STORE_PASSWORD=
+KEY_PASSWORD=
+KEY_STORE_MIGRATE=
+OLD_KEY_STORE_PATH=
+OLD_KEY_STORE_PASSWORD=
+OLD_KEY_PASSWORD=
+```
+
+`KEY_STORE_PATH` is not secret. Outside Docker it defaults to
+`/run/secrets/khoji-keystore.jck` and can be set to another external path.
+Docker Compose always sets the container path to that location and mounts the
+host secrets directory, not the keystore file. A missing file bind would make
+Compose create a directory at that path.
+
+```yaml
+KEY_STORE_PATH: /run/secrets/khoji-keystore.jck
+volumes:
+  - ./secrets:/run/secrets:ro
+```
+
+If an earlier run created `secrets/khoji-keystore.jck` as a directory, delete
+that directory before generating the file. Place the generated file at
+`secrets/khoji-keystore.jck` on the host before `docker compose up`. That
+directory is gitignored. KBS fails startup when either password is missing or
+blank, or when the file, store password, key password, or required alias is
+invalid. Startup errors name the setting and do not print secret values.
+
+The file must be JCEKS and contain secret-key aliases `ssapitokenkey` and
+`ssapitokensalt`. Generate new key bytes at deploy time. Do not copy the old
+file. From `src/khoji-business-server`, with JDK 21 and the three `KEY_*`
+variables set in the environment:
+
+```shell
+mvn -pl khoji-agile-models -DskipTests package
+java -cp khoji-agile-models/target/khoji-agile-models-latest.jar uk.co.uworx.khoji.agile.internal.helper.KeystoreFiles
+```
+
+`KeystoreFiles` reads `KEY_STORE_PATH`, `KEY_STORE_PASSWORD`, and `KEY_PASSWORD`
+from the environment and refuses to overwrite an existing file. It does not
+print those passwords.
+
+To rotate stored tokens, put the old file where the process can read it and
+set `KEY_STORE_MIGRATE=true` plus `OLD_KEY_STORE_PATH`,
+`OLD_KEY_STORE_PASSWORD`, and `OLD_KEY_PASSWORD` for one startup. Inside
+Compose, `OLD_KEY_STORE_PATH` is a container path under `/run/secrets/`, and
+the old file must sit in the host `secrets/` directory. KBS re-encrypts every
+`jwt_source_token` and `jwt_source_refresh_token` column it finds, then logs
+only the row count. It fails if those settings are missing, the old and new
+key material match, a value cannot be decrypted, or the columns are absent.
+After that run, unset `KEY_STORE_MIGRATE`, clear the old settings, and delete
+the old file. Do not commit it.
+
 ## What NOT to change
 
 - **`NG_SERVER_PORT`**: Must be `4243`. This is the KBS port. Express does

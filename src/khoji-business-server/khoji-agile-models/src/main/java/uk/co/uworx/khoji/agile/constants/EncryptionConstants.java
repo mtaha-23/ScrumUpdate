@@ -19,8 +19,4 @@ public class EncryptionConstants
   public static final String ENCRYPTION_TYPE = "AES";
   public static final String ENCRYPTION_ALGORITHM = "AES/CBC/PKCS5Padding";
   public static final String KEY_STORE_TYPE = "JCEKS";
-
-  public static final String KEY_STORE_LOCATION = "khoji-keystore.jck";
-  public static final String KEY_STORE_PASSWORD = "khoji123";
-  public static final String KEY_PASSWORD = "apitoken123";
 }
